@@ -1,0 +1,9 @@
+R 1920 1080
+NO ./path_to_north_texture
+SO ./path_to_south_texture
+WE ./path_to_west_texture
+EA ./path_to_east_texture
+
+C 230,210,100
+F 220,100,50
+S ./path_to_sprite_texture

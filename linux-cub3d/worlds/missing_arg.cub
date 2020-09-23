@@ -1,0 +1,13 @@
+R 1920 1080
+
+SO ./path_to_south_texture
+WE ./path_to_west_texture
+EA ./path_to_east_texture
+
+C 230,220,100
+
+11111
+10001
+10N01
+10001
+11111
