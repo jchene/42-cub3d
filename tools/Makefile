@@ -1,0 +1,20 @@
+NAME	= tools
+CC		= gcc
+LIB		= -lm -lX11 -lXext
+MLX		= ../linux-cub3d/utils/minilibx-linux/libmlx_Linux.a
+DEL		= rm -f
+$(NAME):
+		echo "Choisissez un tool. (make [tool_name])"
+get_keys:
+		${CC} -o get_keys ./get_keys.c ${MLX} ${LIB}
+move_pixel:
+		${CC} -o move_pixel ./move_pixel.c ${MLX} ${LIB}
+image:
+		${CC} -o image ./image.c ${MLX} ${LIB}
+sanimage:
+		${CC} -o image ./image.c ${MLX} ${LIB} -g -fsanitize=address
+math:
+		${CC} -o math ./tan.c ${LIB}
+clean:
+		${DEL} get_keys move_pixel image math
+.PHONY:	get_keys move_pixel image sanimage math clean

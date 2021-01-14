@@ -1,5 +1,9 @@
 #ifndef CUB3D_H
 # define CUB3D_H
+# define CONFIG mlx_ptrs->config
+# define MAP mlx_ptrs->map
+# define GAME mlx_ptrs->game_var
+# define CALC mlx_ptrs->calc_var
 # include "../utils/minilibx-linux/mlx.h"
 # include "../utils/get_next_line/get_next_line.h"
 # include "./lib.h"
@@ -35,10 +39,41 @@ typedef struct	s_map
 	int			written_lines;
 }				t_map;
 
+typedef struct		s_game_var
+{
+	unsigned int	block_size;
+	double			angle;
+	double			fov;
+	double			move_speed;
+	double			angle_speed;
+	float			player_cords[2];
+}					t_game_var;
+
+typedef struct	s_calc_var
+{
+	double		wall_dist;
+	double		perc_hei;
+	double		screen_dist;
+}				t_calc_var;
+
+typedef struct	s_img_data
+{
+	int		*bpp;
+	int		*ln_size;
+	int		*endian;
+	char	*start;
+}				t_img_data;
+
 typedef struct	s_mlx
 {
 	void		*mlx;
 	void		*win;
+	void		*img;
+	t_map		*map;
+	t_config	*config;
+	t_game_var	*game_var;
+	t_calc_var	*calc_var;
+	int			test;
 }				t_mlx;
 
 int				check_path();

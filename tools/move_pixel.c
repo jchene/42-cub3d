@@ -76,6 +76,7 @@ int 	main(void)
 	ptrs->win_ptr = mlx_new_window(ptrs->mlx_ptr, 200, 200, "test");
 	mlx_pixel_put(ptrs->mlx_ptr, ptrs->win_ptr, 100, 100, 1308404);
 	mlx_key_hook(ptrs->win_ptr, handle_key, ptrs);
+	
 	mlx_loop(ptrs->mlx_ptr);
 	return (0);
 }

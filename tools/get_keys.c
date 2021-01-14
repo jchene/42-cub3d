@@ -17,7 +17,7 @@ int	main(void)
 
 	test = 0;
 	mlx_ptr = mlx_init();
-	win_ptr = mlx_new_window(mlx_ptr, 200, 200, "key hook");
+	win_ptr = mlx_new_window(mlx_ptr, 1, 1, "key hook");
 	mlx_key_hook(win_ptr, print_key, &test);
 	mlx_loop(mlx_ptr);
 	return (0);	

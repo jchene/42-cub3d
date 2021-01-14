@@ -10,7 +10,7 @@ CFLAGS		=	-Werror -Wextra -Wall
 
 SANFLAGS	=	-g -fsanitize=address
 
-LIB			=	-lX11 -lXext
+LIB			=	-lm -lX11 -lXext
 
 MLX			=	./utils/minilibx-linux/libmlx_Linux.a
 
@@ -31,4 +31,4 @@ fclean:			clean
 
 re:				fclean all
 
-.PHONY: 		all clean fclean re
+.PHONY: 		all san lean fclean re
