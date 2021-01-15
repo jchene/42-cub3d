@@ -134,7 +134,7 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
 				+ 2] = mlx_ptrs->config->ceiling_color[0];
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 3] = 0;
+				+ 3] = (int)0;
 		}
 		else if (line_count > ((heigth / 2) + (mlx_ptrs->calc_var->perc_hei / 2)))
 		{
@@ -145,19 +145,19 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
 				+ 2] = mlx_ptrs->config->floor_color[0];
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 3] = 0;
+				+ 3] = (int)0;
 		}
 		else
 		{
 			
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 0] = 0;
+				+ 0] = (int)0;
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 1] = 32;
+				+ 1] = (int)32;
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 2] = 170;
+				+ 2] = (int)170;
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 3] = 0;
+				+ 3] = (int)0;
 		}
 		line_count+= 1;
 	}
