@@ -10,7 +10,7 @@ CFLAGS		=	-Werror -Wextra -Wall
 
 SANFLAGS	=	-g -fsanitize=address
 
-LIB			=	-lm -Lmlx -lmlx -framework OpenGL -framework AppKit
+LIB			=	-lm -lmlx -framework OpenGL -framework AppKit
 
 MLX			=	./utils/minilibx_opengl_20191021/libmlx.a
 

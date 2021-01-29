@@ -70,24 +70,24 @@ int		init_game_var(t_mlx *mlx_ptrs)
 
 int		handle_keys(int key, t_mlx *mlx_ptrs)
 {
-	if (key == 65307)
+	if (key == 53)
 	{
 		mlx_destroy_image(mlx_ptrs->mlx, mlx_ptrs->img);
 		mlx_destroy_window(mlx_ptrs->mlx, mlx_ptrs->win);
 		exit(0);
 	}
-	else if (key == 115)
+	else if (key == 1)
 		mlx_ptrs->game_var->player_cords[1] += mlx_ptrs->game_var->move_speed;
-	else if (key == 122)
+	else if (key == 13)
 		mlx_ptrs->game_var->player_cords[1] -= mlx_ptrs->game_var->move_speed;
-	else if (key == 113)
+	else if (key == 2)
 		mlx_ptrs->game_var->player_cords[0] -= mlx_ptrs->game_var->move_speed;
-	else if (key == 100)
+	else if (key == 0)
 		mlx_ptrs->game_var->player_cords[0] += mlx_ptrs->game_var->move_speed;
-	else if (key == 65363)
+	else if (key == 124)
 		mlx_ptrs->game_var->angle = fmod((mlx_ptrs->game_var->angle +
 			mlx_ptrs->game_var->angle_speed), 360.0);
-	else if (key == 65361)
+	else if (key == 123)
 	{
 		mlx_ptrs->game_var->angle = fmod((mlx_ptrs->game_var->angle -
 			mlx_ptrs->game_var->angle_speed), 360.0);
@@ -134,7 +134,7 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
 				+ 2] = mlx_ptrs->config->ceiling_color[0];
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 3] = (int)0;
+				+ 3] = 0;
 		}
 		else if (line_count > ((heigth / 2) + (mlx_ptrs->calc_var->perc_hei / 2)))
 		{
@@ -145,26 +145,26 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
 				+ 2] = mlx_ptrs->config->floor_color[0];
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 3] = (int)0;
+				+ 3] = 0;
 		}
 		else
 		{
 			
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 0] = (int)0;
+				+ 0] = 0;
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 1] = (int)32;
+				+ 1] = 32;
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 2] = (int)170;
+				+ 2] = (char)170;
 			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
-				+ 3] = (int)0;
+				+ 3] = 0;
 		}
 		line_count+= 1;
 	}
 	return (0);
 }
 
-float	raytrace(t_mlx *mlx_ptrs, int column)
+float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	float	mapx;
 	float	mapy;
@@ -184,10 +184,10 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 	else
 		mapy = (int)(GAME->player_cords[1] / 64) * 64 + 64;
 	if (locangle > 270 || locangle < 90)
-		mapx = GAME->player_cords[0] + abs(GAME->player_cords[1] - mapy) /
+		mapx = GAME->player_cords[0] + fabsf(GAME->player_cords[1] - mapy) /
 			tan((locangle * M_PI) / 180);
 	else
-		mapx = GAME->player_cords[0] - abs(GAME->player_cords[1] - mapy) /
+		mapx = GAME->player_cords[0] - fabsf(GAME->player_cords[1] - mapy) /
 			tan((locangle * M_PI) / 180);
 	factor[0] = (64 / tan((locangle * M_PI) / 180));
 	factor[0] = ((locangle < 90 || locangle > 270) ? (factor[0] * -1) : factor[0]);
@@ -237,10 +237,10 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 	else
 		mapx = (int)(GAME->player_cords[0] / 64) * 64 - 1;
 	if (locangle < 180)
-		mapy = GAME->player_cords[1] + abs(GAME->player_cords[0] - mapx) *
+		mapy = GAME->player_cords[1] + fabsf(GAME->player_cords[0] - mapx) *
 			tan((locangle * M_PI) / 180);
 	else
-		mapy = GAME->player_cords[1] - abs(GAME->player_cords[0] - mapx) *
+		mapy = GAME->player_cords[1] - fabsf(GAME->player_cords[0] - mapx) *
 			tan((locangle * M_PI) / 180);
     factor[0] = ((locangle < 90 || locangle > 270) ? 64 : -64);
 	factor[1] = 64 * tan((locangle * M_PI) / 180);
@@ -360,7 +360,7 @@ int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 		(tan((((mlx_ptrs->game_var->fov / 2) * M_PI) / 180))));
 	while (column < length)
 	{
-		mlx_ptrs->calc_var->wall_dist = raytrace(mlx_ptrs, column);
+		mlx_ptrs->calc_var->wall_dist = raycast(mlx_ptrs, column);
 		mlx_ptrs->calc_var->perc_hei = (mlx_ptrs->calc_var->screen_dist *
 			(mlx_ptrs->game_var->block_size / mlx_ptrs->calc_var->wall_dist));
 		printf("b_size: %d - angle: %f - x: %f - y: %f\n",
