@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:12 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/08 14:35:15 by jchene           ###   ########.fr       */
+/*   Updated: 2021/02/09 16:11:05 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ typedef struct		s_game_var
 	double			fov;
 	double			move_speed;
 	double			angle_speed;
-	float			player_cords[2];
+	float			player_x64;
+	float			player_y64;
 }					t_game_var;
 
 typedef struct	s_calc_var

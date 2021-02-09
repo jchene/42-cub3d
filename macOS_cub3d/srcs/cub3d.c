@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:05 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/08 16:05:47 by jchene           ###   ########.fr       */
+/*   Updated: 2021/02/09 16:10:49 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ int		init_game_var(t_mlx *mlx_ptrs)
 	GAME->fov = 60;
 	GAME->move_speed = 10;
 	GAME->angle_speed = 5;
-	GAME->player_cords[0] = (MAP->player_x * 64 + 32);
-	GAME->player_cords[1] = (MAP->player_y * 64 + 32);
+	GAME->player_x64 = (MAP->player_x * 64 + 32);
+	GAME->player_y64 = (MAP->player_y * 64 + 32);
 	player = MAP->map[MAP->player_y][MAP->player_y];
 	if (player == 'N')
 		GAME->angle = 90.0;
@@ -80,6 +80,11 @@ int		init_game_var(t_mlx *mlx_ptrs)
 	return (0);
 }
 
+/*int		handle_direction(int key, t_mlx *mlx_ptrs)
+{
+
+}*/
+
 int		handle_keys(int key, t_mlx *mlx_ptrs)
 {
 	if (key == 53)
@@ -89,13 +94,13 @@ int		handle_keys(int key, t_mlx *mlx_ptrs)
 		exit(0);
 	}
 	else if (key == 1)
-		GAME->player_cords[1] += GAME->move_speed;
+		GAME->player_y64 += GAME->move_speed;
 	else if (key == 13)
-		GAME->player_cords[1] -= GAME->move_speed;
+		GAME->player_y64 -= GAME->move_speed;
 	else if (key == 2)
-		GAME->player_cords[0] -= GAME->move_speed;
+		GAME->player_x64 -= GAME->move_speed;
 	else if (key == 0)
-		GAME->player_cords[0] += GAME->move_speed;
+		GAME->player_x64 += GAME->move_speed;
 	else if (key == 124)
 		GAME->angle = fmod((GAME->angle +
 			GAME->angle_speed), 360.0);
@@ -161,7 +166,14 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 		}
 		else
 		{
-			
+			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
+				+ 0] = 125;
+			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
+				+ 1] = 0;
+			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
+				+ 2] = 123;
+			img_data->start[((column * 4) + (line_count * *(img_data->ln_size)))
+				+ 3] = 0;
 		}
 		line_count+= 1;
 	}
@@ -169,6 +181,41 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 }
 
 float	raycast(t_mlx *mlx_ptrs, int column)
+{
+	float	ray_x64;
+	float	ray_y64;
+	float	clmn_angle;
+	float	dist;
+
+	clmn_angle = (GAME->angle - GAME->fov / 2) + 
+		column * (GAME->fov / CONFIG->resolution[0]);
+	ray_x64 = GAME->player_x64;
+	if (clmn_angle < 180)
+
+
+
+	ray_y64 = GAME->player_y64;
+
+	
+	if (clmn_angle <= 90 || clmn_angle > 270)
+		ray_y64 += (((GAME->player_x64 / 64) * 64 + 64) - GAME->player_x64) * 
+			tan((clmn_angle * M_PI) / 180);
+	else
+		ray_y64 += (GAME->player_x64 - ((GAME->player_x64 / 64) * 64)) * tan((clmn_angle * M_PI) / 180);
+
+
+
+	while ((MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)]) != '1')
+	{
+		ray_x64 += (clmn_angle < 180 ? -64 : 64);
+		ray_y64 += ((clmn_angle >= 90 && clmn_angle < 270) ? -64 : 64);
+	}
+	dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + 
+		pow(fabs(ray_y64 - GAME->player_y64), 2));
+	return (dist);
+}
+
+/*float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	int		quart;
 	float	local_cords[2];
@@ -179,8 +226,8 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 	locangle = fmod(((GAME->angle - GAME->fov / 2) + column *
 		(GAME->fov / CONFIG->resolution[0])), 90.0);
 	quart = GAME->angle / 90.0;
-	map_cords[0] = GAME->player_cords[0];
-	map_cords[1] = GAME->player_cords[1];
+	map_cords[0] = GAME->player_x64;
+	map_cords[1] = GAME->player_y64;
 	local_cords[0] = 0;
 	local_cords[1] = 0;
 	while (MAP->map[((int)map_cords[1] / 64)][((int)map_cords[0] / 64)] != '1')
@@ -197,28 +244,28 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 		}
 		if (quart == 0 || quart == 2)
 		{
-			map_cords[0] = GAME->player_cords[0] + (quart == 0 ?
+			map_cords[0] = GAME->player_x64 + (quart == 0 ?
 				local_cords[0] : (local_cords[0] * -1));
-			map_cords[1] = GAME->player_cords[1] - (quart == 0 ?
+			map_cords[1] = GAME->player_y64 - (quart == 0 ?
 				local_cords[1] : (local_cords[1] * -1));
 		}
 		else if (quart == 1 || quart == 3)
 		{
-			map_cords[0] = GAME->player_cords[0] + (quart == 1 ?
+			map_cords[0] = GAME->player_x64 + (quart == 1 ?
 				(local_cords[1] * -1) : local_cords[1]);
-			map_cords[1] = GAME->player_cords[1] - (quart == 1 ?
+			map_cords[1] = GAME->player_y64 - (quart == 1 ?
 				local_cords[0] : (local_cords[0] * -1));
 		}	
 	}
 	printf("hit wall from %f %f to %f %f map: %c column: %d\n",
-		GAME->player_cords[0], GAME->player_cords[1], map_cords[0], map_cords[1],
+		GAME->player_x64, GAME->player_y64, map_cords[0], map_cords[1],
 		MAP->map[(int)(map_cords[1] / 64)][(int)(map_cords[0] / 64)], column);
-	dist = sqrt(((map_cords[0] - GAME->player_cords[0]) * 
-		(map_cords[0] - GAME->player_cords[0]) +
-		((map_cords[1] - GAME->player_cords[1])) *
-		(map_cords[1] - GAME->player_cords[1])));
+	dist = sqrt(((map_cords[0] - GAME->player_x64) * 
+		(map_cords[0] - GAME->player_x64) +
+		((map_cords[1] - GAME->player_y64)) *
+		(map_cords[1] - GAME->player_y64)));
 	return (dist);
-}
+}*/
 
 int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 {
@@ -236,8 +283,8 @@ int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 		CALC->wall_dist = raycast(mlx_ptrs, column);
 		CALC->perc_hei = (CALC->screen_dist *
 			(GAME->block_size / CALC->wall_dist));
-		printf("b_size: %d - angle: %f - x: %f - y: %f\n",
-			GAME->block_size, GAME->angle, GAME->player_cords[0], GAME->player_cords[1]);
+		/*printf("b_size: %d - angle: %f - x: %f - y: %f\n",
+			GAME->block_size, GAME->angle, GAME->player_x64, GAME->player_y64);*/
 		/*printf("----%d %d\n", MAP->player_x, MAP->player_y);*/
 		draw_column(mlx_ptrs, img_data, column);
 		//printf("column: %d - hp: %f - start: %p\n", column,

@@ -46,7 +46,8 @@ typedef struct		s_game_var
 	double			fov;
 	double			move_speed;
 	double			angle_speed;
-	float			player_cords[2];
+	float			player_x64;
+	float			player_y64;
 }					t_game_var;
 
 typedef struct	s_calc_var

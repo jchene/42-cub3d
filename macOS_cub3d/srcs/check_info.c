@@ -31,8 +31,8 @@ int		check_resolution(char *line)
 	char	*length;
 	char	*heigth;
 
-	length = get_first_word(line + ft_wordlen(line));
-	heigth = get_first_word(length + ft_wordlen(length));
+	length = get_first_word(line + ft_wordlen(line), ' ');
+	heigth = get_first_word(length + ft_wordlen(length), ' ');
 	while (*length != ' ')
 	{
 		if (*length < '0' || *length++ > '9')
@@ -59,7 +59,7 @@ int		check_arg(char *line)
 		free(first_word);
 		return (-1);
 	}
-	next_word = ft_worddup(get_first_word(line) + ft_wordlen(line));
+	next_word = ft_worddup(get_first_word(line, ' ') + ft_wordlen(line));
 	if (ft_strlen(first_word) == 2 || !(ft_strcmp(first_word, "S")))
 		ret = check_path();
 	else if (!(ft_strcmp(first_word, "F")) || !(ft_strcmp(first_word, "C")))

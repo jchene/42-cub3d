@@ -54,8 +54,8 @@ int		init_game_var(t_mlx *mlx_ptrs)
 	mlx_ptrs->game_var->fov = 60;
 	mlx_ptrs->game_var->move_speed = 10;
 	mlx_ptrs->game_var->angle_speed = 5;
-	mlx_ptrs->game_var->player_cords[0] = (mlx_ptrs->map->player_x * 64 + 32);
-	mlx_ptrs->game_var->player_cords[1] = (mlx_ptrs->map->player_y * 64 + 32);
+	mlx_ptrs->game_var->player_x64 = (mlx_ptrs->map->player_x * 64 + 32);
+	mlx_ptrs->game_var->player_y64 = (mlx_ptrs->map->player_y * 64 + 32);
 	player = mlx_ptrs->map->map[mlx_ptrs->map->player_y][mlx_ptrs->map->player_y];
 	if (player == 'N')
 		mlx_ptrs->game_var->angle = 90.0;
@@ -77,13 +77,13 @@ int		handle_keys(int key, t_mlx *mlx_ptrs)
 		exit(0);
 	}
 	else if (key == 115)
-		mlx_ptrs->game_var->player_cords[1] += mlx_ptrs->game_var->move_speed;
+		mlx_ptrs->game_var->player_y64 += mlx_ptrs->game_var->move_speed;
 	else if (key == 122)
-		mlx_ptrs->game_var->player_cords[1] -= mlx_ptrs->game_var->move_speed;
+		mlx_ptrs->game_var->player_y64 -= mlx_ptrs->game_var->move_speed;
 	else if (key == 113)
-		mlx_ptrs->game_var->player_cords[0] -= mlx_ptrs->game_var->move_speed;
+		mlx_ptrs->game_var->player_x64 -= mlx_ptrs->game_var->move_speed;
 	else if (key == 100)
-		mlx_ptrs->game_var->player_cords[0] += mlx_ptrs->game_var->move_speed;
+		mlx_ptrs->game_var->player_x64 += mlx_ptrs->game_var->move_speed;
 	else if (key == 65363)
 		mlx_ptrs->game_var->angle = fmod((mlx_ptrs->game_var->angle +
 			mlx_ptrs->game_var->angle_speed), 360.0);
@@ -176,18 +176,18 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 
 	locangle = (GAME->angle - (GAME->fov / 2)) +
 		(column * (GAME->fov / CONFIG->resolution[0]));
-	printf("tracing from %f %f column: %d at angle: %f\n", GAME->player_cords[0],
-		GAME->player_cords[1], column, locangle);
+	printf("tracing from %f %f column: %d at angle: %f\n", GAME->player_x64,
+		GAME->player_y64, column, locangle);
 	//wall = 0;
 	if (locangle < 180)
-    	mapy = (int)(GAME->player_cords[1] / 64) * 64 - 1;
+    	mapy = (int)(GAME->player_y64 / 64) * 64 - 1;
 	else
-		mapy = (int)(GAME->player_cords[1] / 64) * 64 + 64;
+		mapy = (int)(GAME->player_y64 / 64) * 64 + 64;
 	if (locangle > 270 || locangle < 90)
-		mapx = GAME->player_cords[0] + abs(GAME->player_cords[1] - mapy) /
+		mapx = GAME->player_x64 + abs(GAME->player_y64 - mapy) /
 			tan((locangle * M_PI) / 180);
 	else
-		mapx = GAME->player_cords[0] - abs(GAME->player_cords[1] - mapy) /
+		mapx = GAME->player_x64 - abs(GAME->player_y64 - mapy) /
 			tan((locangle * M_PI) / 180);
 	factor[0] = (64 / tan((locangle * M_PI) / 180));
 	factor[0] = ((locangle < 90 || locangle > 270) ? (factor[0] * -1) : factor[0]);
@@ -209,8 +209,8 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 	{
 		mur[0] = mapx;
 		mur[1] = mapy;
-		dist[0] = sqrt(pow((GAME->player_cords[0] - mur[0]), 2) +
-			pow((GAME->player_cords[1] - mur[1]), 2));
+		dist[0] = sqrt(pow((GAME->player_x64 - mur[0]), 2) +
+			pow((GAME->player_y64 - mur[1]), 2));
 	}*/
 	if (mapx < 0 || mapy < 0)
 	{
@@ -225,22 +225,22 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 	{
 		mur[0] = mapx;
 		mur[1] = mapy;
-		dist[0] = sqrt(pow((GAME->player_cords[0] - mur[0]), 2) +
-			pow((GAME->player_cords[1] - mur[1]), 2));
+		dist[0] = sqrt(pow((GAME->player_x64 - mur[0]), 2) +
+			pow((GAME->player_y64 - mur[1]), 2));
 	}
 	else
 		dist[0] = MAP->map_len * 64;
 	printf("dist[0]: %f\n", dist[0]);
 	//wall = 0;
 	if (locangle > 270 || locangle < 90)
-		mapx = (int)(GAME->player_cords[0] / 64) * 64 + 64;
+		mapx = (int)(GAME->player_x64 / 64) * 64 + 64;
 	else
-		mapx = (int)(GAME->player_cords[0] / 64) * 64 - 1;
+		mapx = (int)(GAME->player_x64 / 64) * 64 - 1;
 	if (locangle < 180)
-		mapy = GAME->player_cords[1] + abs(GAME->player_cords[0] - mapx) *
+		mapy = GAME->player_y64 + abs(GAME->player_x64 - mapx) *
 			tan((locangle * M_PI) / 180);
 	else
-		mapy = GAME->player_cords[1] - abs(GAME->player_cords[0] - mapx) *
+		mapy = GAME->player_y64 - abs(GAME->player_x64 - mapx) *
 			tan((locangle * M_PI) / 180);
     factor[0] = ((locangle < 90 || locangle > 270) ? 64 : -64);
 	factor[1] = 64 * tan((locangle * M_PI) / 180);
@@ -262,8 +262,8 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 	{
 		mur[2] = mapx;
 		mur[3] = mapy;
-		dist[1] = sqrt(pow((GAME->player_cords[0] - mur[2]), 2) +
-			pow((GAME->player_cords[1] - mur[3]), 2));
+		dist[1] = sqrt(pow((GAME->player_x64 - mur[2]), 2) +
+			pow((GAME->player_y64 - mur[3]), 2));
 	}*/
 	if (mapx < 0 || mapy < 0)
 	{
@@ -278,19 +278,19 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 	{
 		mur[2] = mapx;
 		mur[3] = mapy;
-		dist[1] = sqrt(pow((GAME->player_cords[0] - mur[2]), 2) +
-			pow((GAME->player_cords[1] - mur[3]), 2));
+		dist[1] = sqrt(pow((GAME->player_x64 - mur[2]), 2) +
+			pow((GAME->player_y64 - mur[3]), 2));
 	}
 	else
 		dist[1] = MAP->map_hei * 64;
 	printf("dist[1]: %f\n", dist[1]);
 	printf("short: dist[%d]\n", (dist[0] < dist[1]) ? 0 : 1);
 	printf("dist: %f\n\n", (dist[0] < dist[1]) ? dist[0] : dist[1]);
-	/*if (dist[1] == sqrt(pow((GAME->player_cords[0] - mur[2]), 2)
-		+ pow((GAME->player_cords[1] - mur[3]), 2)))
+	/*if (dist[1] == sqrt(pow((GAME->player_x64 - mur[2]), 2)
+		+ pow((GAME->player_y64 - mur[3]), 2)))
 		dist[1] = MAP->map_len * 64;
-	if (dist[0] == sqrt(pow((GAME->player_cords[0] - mur[0]), 2)
-		+ pow((GAME->player_cords[1] - mur[1]), 2)))
+	if (dist[0] == sqrt(pow((GAME->player_x64 - mur[0]), 2)
+		+ pow((GAME->player_y64 - mur[1]), 2)))
 		dist[0] = MAP->map_len * 64;*/
 	return ((dist[0] < dist[1]) ? dist[0] : dist[1]);
 }
@@ -306,8 +306,8 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
 	locangle = fmod(((GAME->angle - GAME->fov / 2) + column *
 		(GAME->fov / CONFIG->resolution[0])), 90.0);
 	quart = GAME->angle / 90.0;
-	map_cords[0] = GAME->player_cords[0];
-	map_cords[1] = GAME->player_cords[1];
+	map_cords[0] = GAME->player_x64;
+	map_cords[1] = GAME->player_y64;
 	local_cords[0] = 0;
 	local_cords[1] = 0;
 	while (MAP->map[((int)map_cords[1] / 64)][((int)map_cords[0] / 64)] != '1')
@@ -324,26 +324,26 @@ float	raytrace(t_mlx *mlx_ptrs, int column)
         }
         if (quart == 0 || quart == 2)
         {
-            map_cords[0] = GAME->player_cords[0] + (quart == 0 ?
+            map_cords[0] = GAME->player_x64 + (quart == 0 ?
 				local_cords[0] : (local_cords[0] * -1));
-            map_cords[1] = GAME->player_cords[1] - (quart == 0 ?
+            map_cords[1] = GAME->player_y64 - (quart == 0 ?
 				local_cords[1] : (local_cords[1] * -1));
         }
         else if (quart == 1 || quart == 3)
         {
-            map_cords[0] = GAME->player_cords[0] + (quart == 1 ?
+            map_cords[0] = GAME->player_x64 + (quart == 1 ?
 				(local_cords[1] * -1) : local_cords[1]);
-            map_cords[1] = GAME->player_cords[1] - (quart == 1 ?
+            map_cords[1] = GAME->player_y64 - (quart == 1 ?
 				local_cords[0] : (local_cords[0] * -1));
         }	
 	}
 	printf("hit wall from %f %f to %f %f map: %c column: %d\n",
-		GAME->player_cords[0], GAME->player_cords[1], map_cords[0], map_cords[1],
+		GAME->player_x64, GAME->player_y64, map_cords[0], map_cords[1],
 		MAP->map[(int)(map_cords[1] / 64)][(int)(map_cords[0] / 64)], column);
-	dist = sqrt(((map_cords[0] - GAME->player_cords[0]) * 
-		(map_cords[0] - GAME->player_cords[0]) +
-		((map_cords[1] - GAME->player_cords[1])) *
-		(map_cords[1] - GAME->player_cords[1])));
+	dist = sqrt(((map_cords[0] - GAME->player_x64) * 
+		(map_cords[0] - GAME->player_x64) +
+		((map_cords[1] - GAME->player_y64)) *
+		(map_cords[1] - GAME->player_y64)));
 	return (dist);
 }*/
 
@@ -364,7 +364,7 @@ int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 		mlx_ptrs->calc_var->perc_hei = (mlx_ptrs->calc_var->screen_dist *
 			(mlx_ptrs->game_var->block_size / mlx_ptrs->calc_var->wall_dist));
 		printf("b_size: %d - angle: %f - x: %f - y: %f\n",
-			mlx_ptrs->game_var->block_size, mlx_ptrs->game_var->angle, mlx_ptrs->game_var->player_cords[0], mlx_ptrs->game_var->player_cords[1]);
+			mlx_ptrs->game_var->block_size, mlx_ptrs->game_var->angle, mlx_ptrs->game_var->player_x64, mlx_ptrs->game_var->player_y64);
 		/*printf("----%d %d\n", mlx_ptrs->map->player_x, mlx_ptrs->map->player_y);*/
 		draw_column(mlx_ptrs, img_data, column);
 		//printf("column: %d - hp: %f - start: %p\n", column,

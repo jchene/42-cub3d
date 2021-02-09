@@ -1,11 +1,11 @@
 #include "../headers/cub3d.h"
 
-char	*get_first_word(char *line)
+char	*get_first_word(char *line, char sep)
 {
 	int		i;
 
 	i = 0;
-	while (line[i] == ' ')
+	while (line[i] == sep)
 		i++;
 	return (&line[i]);
 }
