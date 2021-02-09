@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:05 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/09 16:10:49 by jchene           ###   ########.fr       */
+/*   Updated: 2021/02/09 17:16:04 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,24 +184,23 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	float	ray_x64;
 	float	ray_y64;
-	float	clmn_angle;
+	float	alpha;
 	float	dist;
 
-	clmn_angle = (GAME->angle - GAME->fov / 2) + 
-		column * (GAME->fov / CONFIG->resolution[0]);
+	alpha = (((GAME->angle - GAME->fov / 2) + 
+		column * (GAME->fov / CONFIG->resolution[0])) * M_PI) / 180;
 	ray_x64 = GAME->player_x64;
-	if (clmn_angle < 180)
 
 
 
 	ray_y64 = GAME->player_y64;
-
-	
-	if (clmn_angle <= 90 || clmn_angle > 270)
-		ray_y64 += (((GAME->player_x64 / 64) * 64 + 64) - GAME->player_x64) * 
-			tan((clmn_angle * M_PI) / 180);
+	if (alpha <= M_PI || alpha > (3 * M_PI))
+		ray_y64 -= (((GAME->player_x64 / 64) * 64 + 64) - GAME->player_x64) * 
+			tan((alpha);
 	else
-		ray_y64 += (GAME->player_x64 - ((GAME->player_x64 / 64) * 64)) * tan((clmn_angle * M_PI) / 180);
+		ray_y64 -= (GAME->player_x64 - ((GAME->player_x64 / 64) * 64)) * 
+			tan( modulo((ray_rad + (M_PI / 2)), (M_PI * 2)) * -1 );
+
 
 
 
