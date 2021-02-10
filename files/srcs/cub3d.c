@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:05 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/09 17:16:04 by jchene           ###   ########.fr       */
+/*   Updated: 2021/02/10 03:12:31 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,33 +185,33 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 	float	ray_x64;
 	float	ray_y64;
 	float	alpha;
-	float	dist;
+	float	h_dist;
+	float	v_dist;
 
-	alpha = (((GAME->angle - GAME->fov / 2) + 
+	alpha = (((GAME->angle + GAME->fov / 2) - 
 		column * (GAME->fov / CONFIG->resolution[0])) * M_PI) / 180;
-	ray_x64 = GAME->player_x64;
 
-
-
-	ray_y64 = GAME->player_y64;
+	ray_x64 = ((int)GAME->player_x64 / 64) * 64 + ((alpha <= M_PI || alpha > (3 * M_PI)) ? 64 : -1);
 	if (alpha <= M_PI || alpha > (3 * M_PI))
-		ray_y64 -= (((GAME->player_x64 / 64) * 64 + 64) - GAME->player_x64) * 
-			tan((alpha);
+		ray_y64 = GAME->player_y64 - ((ray_x64 - GAME->player_x64) * tan(alpha));
 	else
-		ray_y64 -= (GAME->player_x64 - ((GAME->player_x64 / 64) * 64)) * 
-			tan( modulo((ray_rad + (M_PI / 2)), (M_PI * 2)) * -1 );
-
-
-
-
-	while ((MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)]) != '1')
+		ray_y64 = GAME->player_y64 - ((GAME->player_x64 - ray_x64) * tan(modulo(alpha + (M_PI / 2), (M_PI * 2)) * -1));
+	
+	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1')
 	{
-		ray_x64 += (clmn_angle < 180 ? -64 : 64);
-		ray_y64 += ((clmn_angle >= 90 && clmn_angle < 270) ? -64 : 64);
+		ray_x64 += ((alpha <= M_PI || alpha > (3 * M_PI)) ? 64 : -64);
+		if (alpha <= M_PI || alpha > (3 * M_PI))
+			ray_y64 += 64 * tan(alpha);
+		else
+			ray_y64 += 64 * tan(modulo(alpha + (M_PI / 2), (M_PI * 2)) * -1);
 	}
-	dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + 
-		pow(fabs(ray_y64 - GAME->player_y64), 2));
-	return (dist);
+	h_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
+
+
+
+	ray_y64 = ((int)GAME->player_y64 / 64) * 64 + ((alpha >= 180) ? 64 : -1);
+	
+	return ((h_dist < v_dist ? h_dist : v_dist));
 }
 
 /*float	raycast(t_mlx *mlx_ptrs, int column)
