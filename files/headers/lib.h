@@ -3,6 +3,7 @@
 
 int		ft_weak_atoi(char *argument);
 char	*first_number(char *string);
+double	modulo(double x, double y);
 
 char	*get_first_word(char *line, char sep);
 int		ft_wordlen(char *word);

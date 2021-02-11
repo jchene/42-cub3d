@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:05 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/10 03:12:31 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/11 16:22:45 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int		check_map(int *pmap_id, t_config *file_info, t_map *map_file)
 	if ((copy_map(*pmap_id, map_file, file_info->first_map_line)) == -1)
 		return (-1);
 	fill_spaces(map_file);
+	map_file->map[map_file->map_hei - 1][map_file->map_len - 1] = '1';
+	display_map(map_file);
 	if (check_horizontal(map_file->map) == -1)
 		return (-1);
 	if (check_vertical(map_file) == -1)
@@ -180,6 +182,18 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 	return (0);
 }
 
+void	check_limits(float *ray_x64, float *ray_y64, t_mlx *mlx_ptrs)
+{
+	if (*ray_x64 / 64 > MAP->map_len - 1 )
+		*ray_x64 = (MAP->map_len - 1) * 64 - 1;
+	if (*ray_y64 / 64 > MAP->map_hei - 1)
+		*ray_y64 = (MAP->map_hei - 1) * 64 - 1;
+	if (*ray_x64 < 0)
+		*ray_x64 = 1;
+	if (*ray_y64 < 0)
+		*ray_y64 = 1;
+}
+
 float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	float	ray_x64;
@@ -191,26 +205,27 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 	alpha = (((GAME->angle + GAME->fov / 2) - 
 		column * (GAME->fov / CONFIG->resolution[0])) * M_PI) / 180;
 
-	ray_x64 = ((int)GAME->player_x64 / 64) * 64 + ((alpha <= M_PI || alpha > (3 * M_PI)) ? 64 : -1);
-	if (alpha <= M_PI || alpha > (3 * M_PI))
-		ray_y64 = GAME->player_y64 - ((ray_x64 - GAME->player_x64) * tan(alpha));
-	else
-		ray_y64 = GAME->player_y64 - ((GAME->player_x64 - ray_x64) * tan(modulo(alpha + (M_PI / 2), (M_PI * 2)) * -1));
-	
+	ray_x64 = ((int)GAME->player_x64 / 64) * 64 + ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -1);
+	ray_y64 = GAME->player_y64 - (fabs(GAME->player_x64 - ray_x64) * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 1 : -1));
+	check_limits(&ray_x64, &ray_x64, mlx_ptrs);
 	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1')
 	{
-		ray_x64 += ((alpha <= M_PI || alpha > (3 * M_PI)) ? 64 : -64);
-		if (alpha <= M_PI || alpha > (3 * M_PI))
-			ray_y64 += 64 * tan(alpha);
-		else
-			ray_y64 += 64 * tan(modulo(alpha + (M_PI / 2), (M_PI * 2)) * -1);
+		ray_x64 += ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -64);
+		ray_y64 += 64 * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI) ? 1 : -1));
+		check_limits(&ray_x64, &ray_x64, mlx_ptrs);
+	}
+	v_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
+	
+	ray_y64 = ((int)GAME->player_y64 / 64) * 64 + ((alpha >= M_PI) ? 64 : -1);
+	ray_x64 = GAME->player_x64 - (fabs(GAME->player_y64 - ray_y64) / tan(alpha) * ((alpha >= M_PI) ? 1 : -1));
+	check_limits(&ray_x64, &ray_x64, mlx_ptrs);
+	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1')
+	{
+		ray_y64 += ((alpha >= M_PI) ? 64 : -64);
+		ray_x64 += 64 / tan(alpha) * ((alpha >= M_PI) ? 1 : -1);
+		check_limits(&ray_x64, &ray_x64, mlx_ptrs);
 	}
 	h_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
-
-
-
-	ray_y64 = ((int)GAME->player_y64 / 64) * 64 + ((alpha >= 180) ? 64 : -1);
-	
 	return ((h_dist < v_dist ? h_dist : v_dist));
 }
 

@@ -29,3 +29,12 @@ char	*first_number(char *string)
 	ft_strlcpy(string, number, color_count);
 	return (number);
 }
+
+double	modulo(double x, double y)
+{
+    x -= y * fabs(x / y);
+    if (x >= 0.) 
+		return (x);
+    else
+		return (x+y);
+}
