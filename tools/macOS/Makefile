@@ -1,7 +1,7 @@
 NAME	= tools
 CC		= gcc
 LIB		= -lm -lmlx -framework OpenGL -framework AppKit
-MLX		= ../../macOS_cub3d/utils/minilibx_opengl_20191021/libmlx.a
+MLX		= ../../files/utils/minilibx_opengl_20191021/libmlx.a
 DEL		= rm -f
 $(NAME):
 		echo "Choisissez un tool. (make [tool_name])"

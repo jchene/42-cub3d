@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../macOS_cub3d/utils/minilibx_opengl_20191021/mlx.h"
+#include "../../files/utils/minilibx_opengl_20191021/mlx.h"
 
 int	print_key(int key, int *test)
 {

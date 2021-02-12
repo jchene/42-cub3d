@@ -1,7 +1,7 @@
 NAME	= tools
 CC		= gcc
 LIB		= -lm -lX11 -lXext
-MLX		= ../../linux-cub3d/utils/minilibx-linux/libmlx_Linux.a
+MLX		= ../files/utils/minilibx-linux/libmlx_Linux.a
 DEL		= rm -f
 $(NAME):
 		echo "Choisissez un tool. (make [tool_name])"

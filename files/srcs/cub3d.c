@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:05 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/11 16:22:45 by jchene           ###   ########.fr       */
+/*   Updated: 2021/02/12 16:23:22 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ int		init_game_var(t_mlx *mlx_ptrs)
 	else if (player == 'S')
 		GAME->angle = 270.0;
 	else if (player == 'E')
-		GAME->angle = 180.0;
+		GAME->angle = 0.0;
 	else
-		GAME->angle = 0;
+		GAME->angle = 180.0;
 	return (0);
 }
 
@@ -103,15 +103,17 @@ int		handle_keys(int key, t_mlx *mlx_ptrs)
 		GAME->player_x64 -= GAME->move_speed;
 	else if (key == 0)
 		GAME->player_x64 += GAME->move_speed;
-	else if (key == 124)
-		GAME->angle = fmod((GAME->angle +
-			GAME->angle_speed), 360.0);
 	else if (key == 123)
 	{
-		GAME->angle = fmod((GAME->angle -
-			GAME->angle_speed), 360.0);
-		if (GAME->angle < 0)
-			GAME->angle += 360;
+		GAME->angle = fmod((GAME->angle + GAME->angle_speed), 360.0);
+		if (GAME->angle > 360.0)
+			GAME->angle -= 360.0;
+	}
+	else if (key == 124)
+	{
+		GAME->angle = fmod((GAME->angle - GAME->angle_speed), 360.0);
+		if (GAME->angle < 0.0)
+			GAME->angle += 360.0;
 	}
 	return (0);
 }
@@ -182,16 +184,33 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 	return (0);
 }
 
-void	check_limits(float *ray_x64, float *ray_y64, t_mlx *mlx_ptrs)
+void	check_limits(float *ray_x64, float *ray_y64, t_mlx *mlx_ptrs, int *limit)
 {
-	if (*ray_x64 / 64 > MAP->map_len - 1 )
+	printf("%f - %f\n", *ray_x64, *ray_y64);
+	if ((int)*ray_x64 / 64 > MAP->map_len - 1 )
+	{
+		printf("LIMITS1\n");
 		*ray_x64 = (MAP->map_len - 1) * 64 - 1;
-	if (*ray_y64 / 64 > MAP->map_hei - 1)
+		*limit = 1;
+	}
+	if ((int)*ray_y64 / 64 > MAP->map_hei - 1)
+	{
+		printf("LIMITS2\n");
 		*ray_y64 = (MAP->map_hei - 1) * 64 - 1;
+		*limit = 1;
+	}
 	if (*ray_x64 < 0)
+	{
+		printf("LIMITS3\n");
 		*ray_x64 = 1;
+		*limit = 1;
+	}
 	if (*ray_y64 < 0)
+	{
+		printf("LIMITS4\n");
 		*ray_y64 = 1;
+		*limit = 1;
+	}
 }
 
 float	raycast(t_mlx *mlx_ptrs, int column)
@@ -201,31 +220,45 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 	float	alpha;
 	float	h_dist;
 	float	v_dist;
+	int		v = 0;
+	int		h = 0;
+	int		limit;
 
+	limit = 0;
 	alpha = (((GAME->angle + GAME->fov / 2) - 
 		column * (GAME->fov / CONFIG->resolution[0])) * M_PI) / 180;
-
+	printf("\ncol: %d - a_r: %f - a_d: %f - ang: %f - fov: %f\n", column, alpha, alpha / M_PI * 180, GAME->angle, GAME->fov);
 	ray_x64 = ((int)GAME->player_x64 / 64) * 64 + ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -1);
 	ray_y64 = GAME->player_y64 - (fabs(GAME->player_x64 - ray_x64) * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 1 : -1));
-	check_limits(&ray_x64, &ray_x64, mlx_ptrs);
-	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1')
+	check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+	printf("plip\n");
+	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1' && limit == 0)
 	{
+		v++;
+		
 		ray_x64 += ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -64);
 		ray_y64 += 64 * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI) ? 1 : -1));
-		check_limits(&ray_x64, &ray_x64, mlx_ptrs);
+		check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+		printf("%d\n", v);
 	}
+	printf("------------\n");
 	v_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
 	
 	ray_y64 = ((int)GAME->player_y64 / 64) * 64 + ((alpha >= M_PI) ? 64 : -1);
-	ray_x64 = GAME->player_x64 - (fabs(GAME->player_y64 - ray_y64) / tan(alpha) * ((alpha >= M_PI) ? 1 : -1));
-	check_limits(&ray_x64, &ray_x64, mlx_ptrs);
-	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1')
+	ray_x64 = GAME->player_x64 - (fabs(GAME->player_y64 - ray_y64) / tan(alpha) * ((alpha >= M_PI) ? -1 : 1));
+	check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+	printf("plop\n");
+	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1' && limit == 0)
 	{
+		h++;
+		
 		ray_y64 += ((alpha >= M_PI) ? 64 : -64);
-		ray_x64 += 64 / tan(alpha) * ((alpha >= M_PI) ? 1 : -1);
-		check_limits(&ray_x64, &ray_x64, mlx_ptrs);
+		ray_x64 += 64 / tan(alpha) * ((alpha >= M_PI) ? -1 : 1);
+		check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+		printf("%d\n", h);
 	}
 	h_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
+	printf((h_dist < v_dist ? "h_dist\n" : "v_dist\n"));
 	return ((h_dist < v_dist ? h_dist : v_dist));
 }
 
@@ -305,6 +338,7 @@ int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 			//CALC->perc_hei, img_data->start);
 		column++;
 	}
+	printf("\n--------------------------------------------\n");
 	return (0);
 }
 
