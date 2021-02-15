@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:05 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/12 16:23:22 by jchene           ###   ########.fr       */
+/*   Updated: 2021/02/15 15:36:59 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,13 +187,13 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 void	check_limits(float *ray_x64, float *ray_y64, t_mlx *mlx_ptrs, int *limit)
 {
 	printf("%f - %f\n", *ray_x64, *ray_y64);
-	if ((int)*ray_x64 / 64 > MAP->map_len - 1 )
+	if ((unsigned int)*ray_x64 / 64 > (unsigned int)MAP->map_len - 1 )
 	{
 		printf("LIMITS1\n");
 		*ray_x64 = (MAP->map_len - 1) * 64 - 1;
 		*limit = 1;
 	}
-	if ((int)*ray_y64 / 64 > MAP->map_hei - 1)
+	if ((unsigned int)*ray_y64 / 64 > (unsigned int)MAP->map_hei - 1)
 	{
 		printf("LIMITS2\n");
 		*ray_y64 = (MAP->map_hei - 1) * 64 - 1;
@@ -213,7 +213,7 @@ void	check_limits(float *ray_x64, float *ray_y64, t_mlx *mlx_ptrs, int *limit)
 	}
 }
 
-float	raycast(t_mlx *mlx_ptrs, int column)
+/*float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	float	ray_x64;
 	float	ray_y64;
@@ -227,10 +227,13 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 	limit = 0;
 	alpha = (((GAME->angle + GAME->fov / 2) - 
 		column * (GAME->fov / CONFIG->resolution[0])) * M_PI) / 180;
+
 	printf("\ncol: %d - a_r: %f - a_d: %f - ang: %f - fov: %f\n", column, alpha, alpha / M_PI * 180, GAME->angle, GAME->fov);
+	
 	ray_x64 = ((int)GAME->player_x64 / 64) * 64 + ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -1);
 	ray_y64 = GAME->player_y64 - (fabs(GAME->player_x64 - ray_x64) * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 1 : -1));
-	check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+	check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
+
 	printf("plip\n");
 	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1' && limit == 0)
 	{
@@ -238,7 +241,7 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 		
 		ray_x64 += ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -64);
 		ray_y64 += 64 * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI) ? 1 : -1));
-		check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+		check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
 		printf("%d\n", v);
 	}
 	printf("------------\n");
@@ -246,7 +249,7 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 	
 	ray_y64 = ((int)GAME->player_y64 / 64) * 64 + ((alpha >= M_PI) ? 64 : -1);
 	ray_x64 = GAME->player_x64 - (fabs(GAME->player_y64 - ray_y64) / tan(alpha) * ((alpha >= M_PI) ? -1 : 1));
-	check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+	check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
 	printf("plop\n");
 	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1' && limit == 0)
 	{
@@ -254,15 +257,16 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 		
 		ray_y64 += ((alpha >= M_PI) ? 64 : -64);
 		ray_x64 += 64 / tan(alpha) * ((alpha >= M_PI) ? -1 : 1);
-		check_limits(&ray_x64, &ray_x64, mlx_ptrs, &limit);
+		check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
 		printf("%d\n", h);
 	}
 	h_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
-	printf((h_dist < v_dist ? "h_dist\n" : "v_dist\n"));
+	printf((h_dist < v_dist ? "h_dist - " : "v_dist - "));
+	printf("%f\n", (h_dist < v_dist ? h_dist : v_dist));
 	return ((h_dist < v_dist ? h_dist : v_dist));
-}
+}*/
 
-/*float	raycast(t_mlx *mlx_ptrs, int column)
+float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	int		quart;
 	float	local_cords[2];
@@ -270,7 +274,7 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 	float	locangle;
 	float	dist;
 
-	locangle = fmod(((GAME->angle - GAME->fov / 2) + column *
+	locangle = fmod(((GAME->angle - GAME->fov / 2) - column *
 		(GAME->fov / CONFIG->resolution[0])), 90.0);
 	quart = GAME->angle / 90.0;
 	map_cords[0] = GAME->player_x64;
@@ -312,7 +316,7 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 		((map_cords[1] - GAME->player_y64)) *
 		(map_cords[1] - GAME->player_y64)));
 	return (dist);
-}*/
+}
 
 int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 {
