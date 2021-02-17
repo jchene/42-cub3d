@@ -15,6 +15,112 @@ double	modulo(double x, double y)
 		return (x+y);
 }
 
+/*float	raycast(t_mlx *mlx_ptrs, int column)
+{
+	int		quart;
+	float	local_x;
+	float	local_y;
+	float	ray_x;
+	float	ray_y;
+	float	locangle;
+	float	dist;
+
+	locangle = fmod(((GAME->angle - GAME->fov / 2) - column *
+		(GAME->fov / CONFIG->resolution[0])), 90.0);
+	quart = GAME->angle / 90.0;
+	ray_x = GAME->player_x64;
+	ray_y = GAME->player_y64;
+	local_x = 0;
+	local_y = 0;
+	while (MAP->map[((int)ray_y / 64)][((int)ray_x / 64)] != '1')
+	{
+		if (locangle < 45.0)
+		{
+			local_x++;
+			local_y += (locangle == 0 ? 0 : tan((locangle*M_PI)/180));
+		}
+		else
+		{
+			local_y++;
+			local_x += 1/(tan((locangle*M_PI)/180));
+		}
+		if (quart == 0 || quart == 2)
+		{
+			ray_x = GAME->player_x64 + (quart == 0 ?
+				local_x : (local_x * -1));
+			ray_y = GAME->player_y64 - (quart == 0 ?
+				local_y : (local_y * -1));
+		}
+		else if (quart == 1 || quart == 3)
+		{
+			ray_x = GAME->player_x64 + (quart == 1 ?
+				(local_y * -1) : local_y);
+			ray_y = GAME->player_y64 - (quart == 1 ?
+				local_x : (local_x * -1));
+		}	
+	}
+	printf("hit wall from %f %f to %f %f map: %c column: %d\n",
+		GAME->player_x64, GAME->player_y64, ray_x, ray_y,
+		MAP->map[(int)(ray_y / 64)][(int)(ray_x / 64)], column);
+	dist = sqrt(((ray_x - GAME->player_x64) * 
+		(ray_x - GAME->player_x64) +
+		((ray_y - GAME->player_y64)) *
+		(ray_y - GAME->player_y64)));
+	return (dist);
+}*/
+
+/*float	raycast(t_mlx *mlx_ptrs, int column)
+{
+	int		quart;
+	float	local_cords[2];
+	float	map_cords[2];
+	float	locangle;
+	float	dist;
+
+	locangle = fmod(((GAME->angle - GAME->fov / 2) - column *
+		(GAME->fov / CONFIG->resolution[0])), 90.0);
+	quart = GAME->angle / 90.0;
+	map_cords[0] = GAME->player_x64;
+	map_cords[1] = GAME->player_y64;
+	local_cords[0] = 0;
+	local_cords[1] = 0;
+	while (MAP->map[((int)map_cords[1] / 64)][((int)map_cords[0] / 64)] != '1')
+	{
+		if (locangle < 45.0)
+		{
+			local_cords[0]++;
+			local_cords[1] += (locangle == 0 ? 0 : tan((locangle*M_PI)/180));
+		}
+		else
+		{
+			local_cords[1]++;
+			local_cords[0] += 1/(tan((locangle*M_PI)/180));
+		}
+		if (quart == 0 || quart == 2)
+		{
+			map_cords[0] = GAME->player_x64 + (quart == 0 ?
+				local_cords[0] : (local_cords[0] * -1));
+			map_cords[1] = GAME->player_y64 - (quart == 0 ?
+				local_cords[1] : (local_cords[1] * -1));
+		}
+		else if (quart == 1 || quart == 3)
+		{
+			map_cords[0] = GAME->player_x64 + (quart == 1 ?
+				(local_cords[1] * -1) : local_cords[1]);
+			map_cords[1] = GAME->player_y64 - (quart == 1 ?
+				local_cords[0] : (local_cords[0] * -1));
+		}	
+	}
+	printf("hit wall from %f %f to %f %f map: %c column: %d\n",
+		GAME->player_x64, GAME->player_y64, map_cords[0], map_cords[1],
+		MAP->map[(int)(map_cords[1] / 64)][(int)(map_cords[0] / 64)], column);
+	dist = sqrt(((map_cords[0] - GAME->player_x64) * 
+		(map_cords[0] - GAME->player_x64) +
+		((map_cords[1] - GAME->player_y64)) *
+		(map_cords[1] - GAME->player_y64)));
+	return (dist);
+}*/
+
 float	raycast(int column)
 {
 	float	ray_x64;
