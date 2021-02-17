@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/08 14:35:05 by jchene            #+#    #+#             */
-/*   Updated: 2021/02/15 15:36:59 by jchene           ###   ########.fr       */
+/*   Updated: 2021/02/17 15:29:31 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,87 +186,148 @@ int		draw_column(t_mlx *mlx_ptrs, t_img_data *img_data, int column)
 
 void	check_limits(float *ray_x64, float *ray_y64, t_mlx *mlx_ptrs, int *limit)
 {
-	printf("%f - %f\n", *ray_x64, *ray_y64);
-	if ((unsigned int)*ray_x64 / 64 > (unsigned int)MAP->map_len - 1 )
+	//printf("%f - %f : %d - %d\n", *ray_x64, *ray_y64, (unsigned int)*ray_x64 / 64, (unsigned int)*ray_y64 / 64);
+	if ((unsigned int)*ray_x64 / 64 > (unsigned int)MAP->map_len - 1)
 	{
-		printf("LIMITS1\n");
+		//printf("LIMITS1\n");
+		//printf("%f - %f\n", *ray_x64, *ray_y64);
 		*ray_x64 = (MAP->map_len - 1) * 64 - 1;
 		*limit = 1;
 	}
 	if ((unsigned int)*ray_y64 / 64 > (unsigned int)MAP->map_hei - 1)
 	{
-		printf("LIMITS2\n");
+		//printf("LIMITS2\n");
+		//printf("%f - %f\n", *ray_x64, *ray_y64);
 		*ray_y64 = (MAP->map_hei - 1) * 64 - 1;
 		*limit = 1;
 	}
 	if (*ray_x64 < 0)
 	{
-		printf("LIMITS3\n");
+		//printf("LIMITS3\n");
+		//printf("%f - %f\n", *ray_x64, *ray_y64);
 		*ray_x64 = 1;
 		*limit = 1;
 	}
 	if (*ray_y64 < 0)
 	{
-		printf("LIMITS4\n");
+		//printf("LIMITS4\n");
+		//printf("%f - %f\n", *ray_x64, *ray_y64);
 		*ray_y64 = 1;
 		*limit = 1;
 	}
 }
 
-/*float	raycast(t_mlx *mlx_ptrs, int column)
+float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	float	ray_x64;
 	float	ray_y64;
 	float	alpha;
-	float	h_dist;
-	float	v_dist;
+	float	beta;
+	float	h_dist = 0.0;
+	float	v_dist = 0.0;
+	int		limit;
 	int		v = 0;
 	int		h = 0;
-	int		limit;
 
 	limit = 0;
 	alpha = (((GAME->angle + GAME->fov / 2) - 
 		column * (GAME->fov / CONFIG->resolution[0])) * M_PI) / 180;
-
-	printf("\ncol: %d - a_r: %f - a_d: %f - ang: %f - fov: %f\n", column, alpha, alpha / M_PI * 180, GAME->angle, GAME->fov);
-	
+	beta = alpha - (GAME->angle * M_PI / 180);
 	ray_x64 = ((int)GAME->player_x64 / 64) * 64 + ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -1);
 	ray_y64 = GAME->player_y64 - (fabs(GAME->player_x64 - ray_x64) * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 1 : -1));
 	check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
 
-	printf("plip\n");
 	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1' && limit == 0)
 	{
 		v++;
-		
 		ray_x64 += ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI)) ? 64 : -64);
-		ray_y64 += 64 * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI) ? 1 : -1));
+		ray_y64 += 64 * tan(alpha) * ((alpha <= (M_PI / 2) || alpha > (1.5 * M_PI) ? -1 : 1));
 		check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
-		printf("%d\n", v);
 	}
-	printf("------------\n");
-	v_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
+	if (limit)
+		v_dist = -1;
+	else
+		v_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
 	
+	limit = 0;
 	ray_y64 = ((int)GAME->player_y64 / 64) * 64 + ((alpha >= M_PI) ? 64 : -1);
-	ray_x64 = GAME->player_x64 - (fabs(GAME->player_y64 - ray_y64) / tan(alpha) * ((alpha >= M_PI) ? -1 : 1));
+	ray_x64 = GAME->player_x64 - (fabs(GAME->player_y64 - ray_y64) / tan(alpha) * ((alpha >= M_PI) ? 1 : -1));
 	check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
-	printf("plop\n");
+
 	while (MAP->map[(int)(ray_y64 / 64)][(int)(ray_x64 / 64)] != '1' && limit == 0)
 	{
 		h++;
-		
 		ray_y64 += ((alpha >= M_PI) ? 64 : -64);
 		ray_x64 += 64 / tan(alpha) * ((alpha >= M_PI) ? -1 : 1);
 		check_limits(&ray_x64, &ray_y64, mlx_ptrs, &limit);
-		printf("%d\n", h);
 	}
-	h_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
-	printf((h_dist < v_dist ? "h_dist - " : "v_dist - "));
-	printf("%f\n", (h_dist < v_dist ? h_dist : v_dist));
-	return ((h_dist < v_dist ? h_dist : v_dist));
+	if (limit)
+		h_dist = -1;
+	else
+		h_dist = sqrt(pow(fabs(ray_x64 - GAME->player_x64), 2) + pow(fabs(ray_y64 - GAME->player_y64), 2));
+
+	//printf("\ncol: %d - a_d: %f - v[%d]: %f - h[%d]: %f - ", column, alpha / M_PI * 180, v, v_dist, h, h_dist);
+	if (h_dist >= 0 && v_dist >= 0)
+		return ((h_dist < v_dist ? h_dist  * cos(beta) : v_dist  * cos(beta)));
+	else
+		return ((h_dist > v_dist ? h_dist  * cos(beta) : v_dist * cos(beta)));
+}
+
+/*float	raycast(t_mlx *mlx_ptrs, int column)
+{
+	int		quart;
+	float	local_x;
+	float	local_y;
+	float	ray_x;
+	float	ray_y;
+	float	locangle;
+	float	dist;
+
+	locangle = fmod(((GAME->angle - GAME->fov / 2) - column *
+		(GAME->fov / CONFIG->resolution[0])), 90.0);
+	quart = GAME->angle / 90.0;
+	ray_x = GAME->player_x64;
+	ray_y = GAME->player_y64;
+	local_x = 0;
+	local_y = 0;
+	while (MAP->map[((int)ray_y / 64)][((int)ray_x / 64)] != '1')
+	{
+		if (locangle < 45.0)
+		{
+			local_x++;
+			local_y += (locangle == 0 ? 0 : tan((locangle*M_PI)/180));
+		}
+		else
+		{
+			local_y++;
+			local_x += 1/(tan((locangle*M_PI)/180));
+		}
+		if (quart == 0 || quart == 2)
+		{
+			ray_x = GAME->player_x64 + (quart == 0 ?
+				local_x : (local_x * -1));
+			ray_y = GAME->player_y64 - (quart == 0 ?
+				local_y : (local_y * -1));
+		}
+		else if (quart == 1 || quart == 3)
+		{
+			ray_x = GAME->player_x64 + (quart == 1 ?
+				(local_y * -1) : local_y);
+			ray_y = GAME->player_y64 - (quart == 1 ?
+				local_x : (local_x * -1));
+		}	
+	}
+	printf("hit wall from %f %f to %f %f map: %c column: %d\n",
+		GAME->player_x64, GAME->player_y64, ray_x, ray_y,
+		MAP->map[(int)(ray_y / 64)][(int)(ray_x / 64)], column);
+	dist = sqrt(((ray_x - GAME->player_x64) * 
+		(ray_x - GAME->player_x64) +
+		((ray_y - GAME->player_y64)) *
+		(ray_y - GAME->player_y64)));
+	return (dist);
 }*/
 
-float	raycast(t_mlx *mlx_ptrs, int column)
+/*float	raycast(t_mlx *mlx_ptrs, int column)
 {
 	int		quart;
 	float	local_cords[2];
@@ -316,7 +377,7 @@ float	raycast(t_mlx *mlx_ptrs, int column)
 		((map_cords[1] - GAME->player_y64)) *
 		(map_cords[1] - GAME->player_y64)));
 	return (dist);
-}
+}*/
 
 int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 {
@@ -332,6 +393,7 @@ int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 	while (column < length)
 	{
 		CALC->wall_dist = raycast(mlx_ptrs, column);
+		//printf("dist: %f\n", CALC->wall_dist);
 		CALC->perc_hei = (CALC->screen_dist *
 			(GAME->block_size / CALC->wall_dist));
 		/*printf("b_size: %d - angle: %f - x: %f - y: %f\n",
@@ -342,7 +404,7 @@ int		draw_img(t_img_data *img_data, t_mlx *mlx_ptrs)
 			//CALC->perc_hei, img_data->start);
 		column++;
 	}
-	printf("\n--------------------------------------------\n");
+	//printf("\n--------------------------------------------\n");
 	return (0);
 }
 
