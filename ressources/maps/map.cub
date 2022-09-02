@@ -1,0 +1,15 @@
+NO ./ressources/textures/n_tex.xpm
+SO ./ressources/textures/s_tex.xpm
+WE ./ressources/textures/e_tex.xpm
+EA ./ressources/textures/w_tex.xpm
+
+F 155, 155, 155
+C 158, 158, 158
+
+11111111111111
+10000000000001
+10010010000001
+10000000000001
+1000N000000001
+10000000000001
+11111111111111
