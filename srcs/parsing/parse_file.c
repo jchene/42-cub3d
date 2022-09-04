@@ -6,7 +6,7 @@
 /*   By: anguinau <constantasg@gmail.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/27 21:48:08 by anguinau          #+#    #+#             */
-/*   Updated: 2022/06/30 02:27:33 by anguinau         ###   ########.fr       */
+/*   Updated: 2022/09/04 16:21:20 by anguinau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	join_letters(t_parsing *start, int i)
 
 	if (!start->c)
 	{
-		ft_putstr_fd("Error\nEmpty map file\n", 1);
+		ft_putstr_fd("Error\nEmpty map file\n", 2);
 		return (-1);
 	}
 	str = malloc(sizeof(char) * (i + 1));
@@ -59,9 +59,8 @@ int	parse_file(char *path, int i, int fd, t_parsing *index)
 	char		buffer[1];
 
 	index = &start;
-	start.c = '\0';
 	fd = open(path, O_RDONLY);
-	if (fd == -1)
+	if (fd == -1 && ft_putstr_fd("Error\nCan't open file\n", 2))
 		return (0);
 	while (read(fd, &buffer, 1))
 	{

@@ -6,11 +6,11 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/07 22:28:05 by anguinau          #+#    #+#             */
-/*   Updated: 2022/09/02 17:11:11 by jchene           ###   ########.fr       */
+/*   Updated: 2022/09/04 18:33:43 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#	ifndef HEADER_H
+#ifndef HEADER_H
 # define HEADER_H
 
 # include "../minilibx_linux/mlx.h"
@@ -24,6 +24,11 @@
 # include "../ressources/libft/includes/libft.h"
 # include <string.h>
 # include <stdio.h>
+
+# define ROTATE_SPEED	0.066
+# define FWD_SPEED		0.1
+# define BWD_SPEED		0.05
+# define SIDE_SPEED		0.05
 
 typedef struct s_parsing
 {
@@ -100,12 +105,14 @@ typedef struct s_data
 	int		draw_end;
 	int		side;
 	float	tex_x_offset;
+	int		tex_y_offset;
+	int		dont_draw;
 	t_img	*actual_tex;
 	t_img	display;
 }			t_data;
 
 t_data	*data(void);
-int		exit_proprely(int print);
+int		exit_proprely(int ret);
 int		parse_file(char *path, int i, int fd, t_parsing *index);
 int		upload_textures(char *str, int *i, int j, char ref);
 int		get_colors(char *str, int *i, int l, char ref);
@@ -117,6 +124,11 @@ int		keyrelease_hook(int keycode);
 int		keypress_hook(int keycode);
 int		loop_hook(void);
 int		draw_line(int x, int y, int color);
-void	move(void);
+void	move_up(void);
+void	turn_left(void);
+int		iset(int *to_set, int value, int ret);
+int		upload_n_tex(char *path);
+int		upload_s_tex(char *path);
+void	init_values(void);
 
 #	endif

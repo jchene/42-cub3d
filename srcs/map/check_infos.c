@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_map_infos.c                                  :+:      :+:    :+:   */
+/*   check_infos.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anguinau <constantasg@gmail.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 23:33:18 by anguinau          #+#    #+#             */
-/*   Updated: 2022/07/01 02:15:35 by anguinau         ###   ########.fr       */
+/*   Updated: 2022/09/04 16:12:45 by anguinau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,14 @@ int	check_that_case(int *i, int *j, int *inside)
 	if ((data())->map.map[*i][*j] == 2)
 			*inside = 1;
 	if (!inside && (data())->map.map[*i][*j] != 0
-		&& ft_putstr_fd("Error\nWrong map synthax\n", 1))
+		&& ft_putstr_fd("Error\nWrong map synthax\n", 2))
 		return (0);
 	if (*inside)
 		if ((data())->map.map[*i][*j] != 2 && (data())->map.map[*i][*j] != 1
 			&& (data())->map.map[*i][*j] != 8 && (data())->map.map[*i][*j] != 5
 			&& (data())->map.map[*i][*j] != 4 && (data())->map.map[*i][*j] != 6
 			&& (data())->map.map[*i][*j] != 0
-			&& ft_putstr_fd("Error\nWrong map synthax\n", 1))
+			&& ft_putstr_fd("Error\nWrong map synthax\n", 2))
 			return (0);
 	if ((data())->map.map[*i][*j] == -1)
 		(*j)--;
@@ -64,9 +64,9 @@ int	check_that_line(int *i, int *j, int *inside, int k)
 	while ((data())->map.map[*i][++(*j)] != -1)
 		if (!check_that_case(i, j, inside))
 			return (0);
-	while ((data())->map.map[*i][*j - ++k] != 2)
+	while (*j - ++k >= 0 && (data())->map.map[*i][*j - k] != 2)
 		if ((data())->map.map[*i][*j - k] != 0
-			&& ft_putstr_fd("Error\nWrong map synthax\n", 1))
+			&& ft_putstr_fd("Error\nWrong map synthax\n", 2))
 			return (0);
 	return (1);
 }
@@ -74,10 +74,10 @@ int	check_that_line(int *i, int *j, int *inside, int k)
 int	check_map_infos(int i, int j, int inside, int e_count)
 {
 	e_count = check_missing_value(-1, -1, 0);
-	if (e_count != 3 && ft_putstr_fd("Error\nWrong map synthax\n", 1))
+	if (e_count != 3 && ft_putstr_fd("Error\nWrong map synthax\n", 2))
 		return (-1);
 	if (!check_map_walls(-1, -1)
-		&& ft_putstr_fd("Error\nWalls don't cover the map\n", 1))
+		&& ft_putstr_fd("Error\nWalls don't cover the map\n", 2))
 		return (-1);
 	while ((data())->map.map[++i])
 		if (!check_that_line(&i, &j, &inside, 0))

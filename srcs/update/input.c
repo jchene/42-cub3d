@@ -19,11 +19,11 @@ int	keyrelease_hook(int keycode)
 		exit_proprely(0);
 		exit(EXIT_SUCCESS);
 	}
-	if (keycode == 122)
+	if (keycode == 119)
 		(data())->move_up = 0;
 	if (keycode == 115)
 		(data())->move_down = 0;
-	if (keycode == 113)
+	if (keycode == 97)
 		(data())->move_left = 0;
 	if (keycode == 100)
 		(data())->move_right = 0;
@@ -36,11 +36,11 @@ int	keyrelease_hook(int keycode)
 
 int	keypress_hook(int keycode)
 {
-	if (keycode == 122)
+	if (keycode == 119)
 		(data())->move_up = 1;
 	if (keycode == 115)
 		(data())->move_down = 1;
-	if (keycode == 113)
+	if (keycode == 97)
 		(data())->move_left = 1;
 	if (keycode == 100)
 		(data())->move_right = 1;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anguinau <constantasg@gmail.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/03 02:25:52 by anguinau          #+#    #+#             */
-/*   Updated: 2022/09/02 19:20:21 by jchene           ###   ########.fr       */
+/*   Updated: 2022/09/03 18:28:47 by anguinau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	put_from_tex(int x, int y, int i, int j)
 			(data())->actual_tex = (data())->map.w_tex;
 	}
 	i = (data())->tex_x_offset * (data())->actual_tex->width;
-	j = (y - (data())->draw_start)
+	j = (y - (data())->draw_start - (data())->tex_y_offset)
 		* (float)((float)(data())->actual_tex->height / (data())->line_size);
 	if ((data())->side == 0 && (data())->ray_dir_x > 0)
 		i = (data())->actual_tex->width - i - 1;
@@ -54,7 +54,8 @@ int	draw_line(int x, int y, int color)
 {
 	while (++y < (data())->screen_height)
 	{
-		if (y < (data())->draw_start || y > (data())->draw_end)
+		if (y < (data())->draw_start || y > (data())->draw_end
+			|| (data())->dont_draw)
 		{
 			color = (data())->map.c_color;
 			if (y >= (data())->screen_height / 2)
@@ -64,5 +65,5 @@ int	draw_line(int x, int y, int color)
 		else
 			put_from_tex(x, y, 0, 0);
 	}
-	return (1);
+	return (iset(&(data())->dont_draw, 0, 1));
 }

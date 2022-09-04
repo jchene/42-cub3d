@@ -6,16 +6,16 @@
 #    By: jchene <jchene@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/07 22:18:31 by anguinau          #+#    #+#              #
-#    Updated: 2022/09/02 16:25:38 by jchene           ###   ########.fr        #
+#    Updated: 2022/09/04 21:17:03 by jchene           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME			=	cub3d
+NAME			=	cub3D
 SRCSDIR			=	srcs
 INCLUDESDIR		=	includes
 OBJSDIR			=	objs
 OBJS_SUBDIR		=	$(shell find $(SRCSDIR) -type d | grep '/' | sed 's/srcs/objs/g')
-CFLAGS			=	-Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS			=	-Wall -Wextra -Werror -g #-fsanitize=address
 CC				=	gcc
 RM				=	rm -rf
 

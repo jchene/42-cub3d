@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_2d_map.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anguinau <constantasg@gmail.com>           +#+  +:+       +#+        */
+/*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 02:36:43 by anguinau          #+#    #+#             */
-/*   Updated: 2022/07/04 22:32:02 by anguinau         ###   ########.fr       */
+/*   Updated: 2022/09/04 21:27:04 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,40 +85,48 @@ int	assign_2d_map_values(int j, int k, int l)
 		&& init_player_pos(j, l, 'W'))
 		(data())->map.map[j][l] = 6;
 	else
+	{
+		free((data())->map.map[j]);
+		(data())->map.map[j] = NULL;
 		return (0);
+	}
 	return (1);
 }
 
 int	fill_2d_map(int i, int j, int k, int l)
 {
-	while ((data())->map.map_infos[i])
+	while ((data())->map.map_infos[++i])
 	{
-		i++;
-		if ((!(data())->map.map_infos[i] || (data())->map.map_infos[i] == '\n')
+		if ((data())->map.map_infos[i] == '\n'
 			&& (data())->map.map_infos[i - 1] != '\n')
 		{
 			(data())->map.map[++j] = malloc(sizeof(int) * (i - k + 1));
 			l = -1;
 			while (++l < (i - k))
 				if (!assign_2d_map_values(j, k, l)
-					&& ft_putstr_fd("Error\nWrong map synthax\n", 1))
+					&& ft_putstr_fd("Error\nWrong map synthax\n", 2))
 					return (-1);
 			(data())->map.map[j][l] = -1;
-			if ((data())->map.map_infos[i])
-				i++;
-			k = i;
+			k = i + 1;
 		}
 	}
+	(data())->map.map[++j] = malloc(sizeof(int) * (i - k + 1));
+	l = -1;
+	while (++l < (i - k))
+		if (!assign_2d_map_values(j, k, l)
+			&& ft_putstr_fd("Error\nWrong map synthax\n", 2))
+			return (-1);
+	(data())->map.map[j][l] = -1;
 	return (check_map_infos(-1, 0, 0, 0));
 }
 
 int	create_2d_map(int i, int j, int k, int l)
 {
-	if ((!(data())->map.map_infos || !(data())->map.c_color
-			|| !(data())->map.f_color || !(data())->map.n_tex
+	if ((!(data())->map.map_infos || (data())->map.c_color == -1
+			|| (data())->map.f_color == -1 || !(data())->map.n_tex
 			|| !(data())->map.s_tex || !(data())->map.e_tex
 			|| !(data())->map.w_tex)
-		&& ft_putstr_fd("Error\nMap data missing\n", 1))
+		&& ft_putstr_fd("Error\nMap data missing\n", 2))
 		return (-1);
 	while ((data())->map.map_infos[++i])
 		if (i != 0 && (data())->map.map_infos[i] == '\n'
@@ -131,7 +139,5 @@ int	create_2d_map(int i, int j, int k, int l)
 		return (0);
 	(data())->map.map_size = j;
 	(data())->map.map[j] = NULL;
-	i = 0;
-	j = -1;
-	return (fill_2d_map(i, j, k, l));
+	return (fill_2d_map(-1, -1, k, l));
 }
