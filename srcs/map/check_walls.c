@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_walls.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anguinau <constantasg@gmail.com>           +#+  +:+       +#+        */
+/*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/01 00:11:19 by anguinau          #+#    #+#             */
-/*   Updated: 2022/09/03 17:57:40 by anguinau         ###   ########.fr       */
+/*   Updated: 2022/09/08 19:32:18 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,9 @@ int	check_map_walls(int i, int j)
 		j = -1;
 		while ((data())->map.map[i][++j] != -1)
 		{
-			if ((data())->map.map[i][j] == 1)
+			if ((data())->map.map[i][j] == 1 || (data())->map.map[i][j] == 4
+				|| (data())->map.map[i][j] == 5 || (data())->map.map[i][j] == 6
+				|| (data())->map.map[i][j] == 8)
 			{
 				if (!check_row(i, j, 0, 0))
 					return (0);

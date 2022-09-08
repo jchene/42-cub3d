@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 02:36:43 by anguinau          #+#    #+#             */
-/*   Updated: 2022/09/04 21:27:04 by jchene           ###   ########.fr       */
+/*   Updated: 2022/09/08 19:27:43 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,13 +110,16 @@ int	fill_2d_map(int i, int j, int k, int l)
 			k = i + 1;
 		}
 	}
-	(data())->map.map[++j] = malloc(sizeof(int) * (i - k + 1));
-	l = -1;
-	while (++l < (i - k))
-		if (!assign_2d_map_values(j, k, l)
-			&& ft_putstr_fd("Error\nWrong map synthax\n", 2))
-			return (-1);
-	(data())->map.map[j][l] = -1;
+	if (i > 0 && (data())->map.map_infos[i - 1] != '\n')
+	{
+		(data())->map.map[++j] = malloc(sizeof(int) * (i - k + 1));
+		l = -1;
+		while (++l < (i - k))
+			if (!assign_2d_map_values(j, k, l)
+				&& ft_putstr_fd("Error\nWrong map synthax\n", 2))
+				return (-1);
+		(data())->map.map[j][l] = -1;
+	}
 	return (check_map_infos(-1, 0, 0, 0));
 }
 

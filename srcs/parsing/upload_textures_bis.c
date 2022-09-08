@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   upload_textures_bis.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anguinau <constantasg@gmail.com>           +#+  +:+       +#+        */
+/*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/03 15:10:54 by anguinau          #+#    #+#             */
-/*   Updated: 2022/09/04 16:14:44 by anguinau         ###   ########.fr       */
+/*   Updated: 2022/09/08 19:26:12 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 int	upload_n_tex(char *path)
 {
+	if ((data())->map.n_tex)
+	{
+		mlx_destroy_image((data())->mlx.ptr, (data())->map.n_tex->img);
+		(data())->map.n_tex->img = NULL;
+		free((data())->map.n_tex);
+		(data())->map.n_tex = NULL;
+	}
 	(data())->map.n_tex = malloc(sizeof(t_img));
 	if (!(data())->map.n_tex)
 		return (0);
@@ -33,6 +40,13 @@ int	upload_n_tex(char *path)
 
 int	upload_s_tex(char *path)
 {
+	if ((data())->map.s_tex)
+	{
+		mlx_destroy_image((data())->mlx.ptr, (data())->map.s_tex->img);
+		(data())->map.s_tex->img = NULL;
+		free((data())->map.s_tex);
+		(data())->map.s_tex = NULL;
+	}
 	(data())->map.s_tex = malloc(sizeof(t_img));
 	if (!(data())->map.s_tex)
 		return (0);

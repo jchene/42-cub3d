@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/30 00:06:26 by anguinau          #+#    #+#             */
-/*   Updated: 2022/09/04 18:31:10 by jchene           ###   ########.fr       */
+/*   Updated: 2022/09/08 19:26:35 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 int	upload_e_tex(char *path)
 {
+	if ((data())->map.e_tex)
+	{
+		mlx_destroy_image((data())->mlx.ptr, (data())->map.e_tex->img);
+		(data())->map.e_tex->img = NULL;
+		free((data())->map.e_tex);
+		(data())->map.e_tex = NULL;
+	}
 	(data())->map.e_tex = malloc(sizeof(t_img));
 	if (!(data())->map.e_tex)
 		return (0);
@@ -33,6 +40,13 @@ int	upload_e_tex(char *path)
 
 int	upload_w_tex(char *path)
 {
+	if ((data())->map.w_tex)
+	{
+		mlx_destroy_image((data())->mlx.ptr, (data())->map.w_tex->img);
+		(data())->map.w_tex->img = NULL;
+		free((data())->map.w_tex);
+		(data())->map.w_tex = NULL;
+	}
 	(data())->map.w_tex = malloc(sizeof(t_img));
 	if (!(data())->map.w_tex)
 		return (0);

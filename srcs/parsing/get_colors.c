@@ -6,7 +6,7 @@
 /*   By: jchene <jchene@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/03 15:40:09 by anguinau          #+#    #+#             */
-/*   Updated: 2022/09/04 18:31:21 by jchene           ###   ########.fr       */
+/*   Updated: 2022/09/08 19:44:41 by jchene           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 int	fill_colors(int l, int ref, int colors[3])
 {
 	if (l != 2 && ft_putstr_fd("Error\nInvalid colors\n", 2))
+		return (iset(&(data())->ret, -1, -1));
+	if (colors[0] > 255 || colors[1] > 255 || colors[2] > 255)
 	{
-		(data())->ret = -1;
-		return ((data())->ret);
+		ft_putstr_fd("Error\nInvalid colors\n", 2);
+		return (iset(&(data())->ret, -1, -1));
 	}
 	if (ref == 'f')
 		(data())->map.f_color = (colors[0] << 16 | colors[1] << 8 | colors[2]);
@@ -41,14 +43,14 @@ int	get_colors(char *str, int *i, int l, char ref)
 			return (iset(&(data())->ret, -1, -1));
 		if (ft_isdigit(str[*i]))
 		{
-			k = -1;
+			k = 0;
 			while (ft_isdigit(str[*i]) && k < 3)
-				color[++k] = str[(*i)++];
-			color[++k] = '\0';
+				color[k++] = str[(*i)++];
+			color[k] = '\0';
 			if ((!ft_ischarset(" ,\n", str[*i]) || l >= 3)
 				&& ft_putstr_fd("Error\nInvalid colors\n", 2))
 				return (iset(&(data())->ret, -1, -1));
-			colors[++l] = atoi(color);
+			colors[++l] = ft_atoi(color);
 		}
 	}
 	return (fill_colors(l, ref, colors));
